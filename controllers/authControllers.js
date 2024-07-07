@@ -6,6 +6,9 @@ const register = async (req, res) => {
     if (emailAlreadyExists) {
         throw new CustomAPIError.BadRequestError(`Email: ${email} already exists. Please choose another value for email`)
     }
+
+    const isFirstAccount = await User.countDocuments({}) == 0
+    const role = isFirstAccount? 'admin': 'user'
     const user = await User.create(req.body)
     return res.status(201).json(user)
 }

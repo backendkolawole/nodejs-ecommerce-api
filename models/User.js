@@ -19,6 +19,10 @@ const userSchema = new mongoose.Schema({
             validator: validator.isEmail
         },
         unique: true
+    },
+    role: {
+        type: String,
+        enum: ['user', 'admin']
     }
 })
 
