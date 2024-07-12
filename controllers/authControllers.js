@@ -1,7 +1,7 @@
 const User = require("../models/User");
 const CustomAPIError = require("../errors");
 const jwt = require("jsonwebtoken");
-const { createJWT } = require("../utils");
+const { attachCookieToResponse } = require("../utils");
 const register = async (req, res) => {
   const { name, email, password } = req.body;
   const emailAlreadyExists = await User.findOne({ email });
@@ -16,15 +16,9 @@ const register = async (req, res) => {
 
   const user = await User.create({ name, email, password, role });
   const tokenUser = { name: user.name, userId: user._id, role: user.role };
-  const token = await createJWT(tokenUser);
-
-  const oneDay = 1000 * 60 * 60 * 24 
-  res.cookie("token", token, {
-    httpOnly: true,
-    expires: new Date(Date.now() + oneDay),
-  });
-
-  return res.status(201).json({ user });
+  attachCookieToResponse(res, tokenUser)
+  
+  return res.status(201).json({ user: tokenUser });
 };
 
 const login = async (req, res) => {
