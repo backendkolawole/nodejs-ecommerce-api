@@ -1,7 +1,8 @@
 require("dotenv").config();
 require("express-async-errors");
 
-const morgan = require('morgan')
+const morgan = require("morgan");
+const cookieParser = require("cookie-parser");
 
 //express
 const express = require("express");
@@ -14,17 +15,19 @@ const connectDB = require("./config/connect");
 const errorHandlerMiddleware = require("./middleware/error-handler");
 const notFoundMiddleware = require("./middleware/not-found");
 
-const authRouter = require('./routes/authRouter')
+const authRouter = require("./routes/authRouter");
 
 const PORT = process.env.PORT || 5000;
 
-app.use(morgan('tiny'))
+app.use(morgan("tiny"));
 app.use(express.json());
+app.use(cookieParser());
+
 app.get("", (req, res) => {
   res.send(`e-commerce api`);
 });
 
-app.use('/api/v1/auth', authRouter)
+app.use("/api/v1/auth", authRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

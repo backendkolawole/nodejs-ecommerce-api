@@ -17,7 +17,14 @@ const register = async (req, res) => {
   const user = await User.create({ name, email, password, role });
   const tokenUser = { name: user.name, userId: user._id, role: user.role };
   const token = await createJWT(tokenUser);
-  return res.status(201).json({ user, token });
+
+  const oneDay = 1000 * 60 * 60 * 24 
+  res.cookie("token", token, {
+    httpOnly: true,
+    expires: new Date(Date.now() + oneDay),
+  });
+
+  return res.status(201).json({ user });
 };
 
 const login = async (req, res) => {
